@@ -1,0 +1,37 @@
+newimagedb=> \dt
+         List of relations
+ Schema |   Name   | Type  | Owner  
+--------+----------+-------+--------
+ public | app_user | table | myuser
+ public | image    | table | myuser
+(2 rows)
+
+newimagedb=> \d image
+                               Table "public.image"
+   Column    |          Type          | Collation | Nullable |      Default       
+-------------+------------------------+-----------+----------+--------------------
+ id          | uuid                   |           | not null | uuid_generate_v4()
+ title       | character varying(50)  |           | not null | 
+ owner       | character varying(50)  |           | not null | 
+ description | character varying(250) |           |          | 
+ content     | bytea                  |           | not null | 
+ extension   | character varying(4)   |           | not null | 
+Indexes:
+    "image_pkey" PRIMARY KEY, btree (id)
+    "image_title_key" UNIQUE CONSTRAINT, btree (title)
+Foreign-key constraints:
+    "fk_image_app_user" FOREIGN KEY (owner) REFERENCES app_user(email)
+
+newimagedb=> \d app_user
+                      Table "public.app_user"
+  Column  |         Type          | Collation | Nullable | Default 
+----------+-----------------------+-----------+----------+---------
+ email    | character varying(50) |           | not null | 
+ password | character varying(60) |           | not null | 
+Indexes:
+    "app_user_pkey" PRIMARY KEY, btree (email)
+Referenced by:
+    TABLE "image" CONSTRAINT "fk_image_app_user" FOREIGN KEY (owner) REFERENCES app_user(email)
+
+
+
