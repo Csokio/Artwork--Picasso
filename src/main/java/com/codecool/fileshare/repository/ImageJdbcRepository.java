@@ -2,10 +2,13 @@ package com.codecool.fileshare.repository;
 
 import com.codecool.fileshare.exception.ImageAlreadyInDatabaseException;
 import com.codecool.fileshare.model.Image;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component("jdbc")
 public class ImageJdbcRepository implements ImageRepository {
@@ -49,6 +52,21 @@ public class ImageJdbcRepository implements ImageRepository {
 
     @Override
     public boolean checkOwner(String owner, String id) {
+
+        String SQL = "SELECT id " +
+                "FROM image JOIN app_user ON ap.email  = i.owner " +
+                "WHERE owner = ?;";
+
+        try (Connection con = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
+            PreparedStatement st = con.prepareStatement(SQL);
+            st.setString(1, owner);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                if (rs.getObject("id", java.util.UUID.class).toString() == id) return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(getClass().getSimpleName() + " " + SQL + ": " + e.getSQLState());
+        }
         return false;
     }
 
