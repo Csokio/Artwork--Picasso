@@ -40,8 +40,7 @@ public class ImageService {
 
     public boolean checkOwner(String owner, String id) {
 
-
-        return false;
+        return imageRepository.checkOwner(owner, id);
     }
 
     public void delete(String id, String owner) {
