@@ -38,6 +38,7 @@ public class UserService implements UserDetailsService {
 
     public List<UserDTO> getAll(){
 
+        return null;
     }
 
     @Override
