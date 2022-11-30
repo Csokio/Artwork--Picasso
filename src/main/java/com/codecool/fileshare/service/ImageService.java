@@ -2,6 +2,7 @@ package com.codecool.fileshare.service;
 
 import com.codecool.fileshare.dto.ImageDataDTO;
 import com.codecool.fileshare.dto.ImageUpdateDTO;
+import com.codecool.fileshare.model.Image;
 import com.codecool.fileshare.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,10 +23,19 @@ public class ImageService {
     private ImageRepository imageRepository;
 
     public List<ImageDataDTO> getAll(String user) {
-        //get owned by user.
-        //help: imgurl = System.getenv("url") + "/api/artwork/" + id + "." +image.getExtension();
-
-        return null;
+        List<ImageDataDTO> imageDTOs = new ArrayList<>();
+        List<Image> images = imageRepository.getAll(user);
+        for (Image i : images) {
+            String imgUrl = System.getenv("url") + "/api/artwork/" + i.getId() + "." + i.getExtension();
+            ImageDataDTO imageDataDTO = new ImageDataDTO(
+                    i.getId(),
+                    i.getTitle(),
+                    i.getDescription(),
+                    imgUrl
+            );
+            imageDTOs.add(imageDataDTO);
+        }
+        return imageDTOs;
     }
 
     public boolean checkOwner(String owner, String id) {
