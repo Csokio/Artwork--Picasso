@@ -45,7 +45,7 @@ public class ImageService {
 
     public void delete(String id, String owner) {
 
-
+        imageRepository.delete(id, owner);
     }
 
     public void updateCategory(String id, ImageUpdateDTO imageUpdateDTO, String owner) {
