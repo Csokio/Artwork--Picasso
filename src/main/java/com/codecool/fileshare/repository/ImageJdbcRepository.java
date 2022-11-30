@@ -69,7 +69,19 @@ public class ImageJdbcRepository implements ImageRepository {
 
     @Override
     public byte[] getImageFile(String id) {
-        return new byte[0];
+        byte[] bytearray = null;
+        String SQL = "SELECT content FROM image WHERE id = ?;";
+        try(Connection con = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
+            PreparedStatement statement = con.prepareStatement(SQL);
+            statement.setString(1,id);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                bytearray = rs.getBytes("content");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(getClass().getSimpleName() + " " + SQL + ": " + e.getSQLState());
+        }
+        return bytearray;
     }
 }
 
