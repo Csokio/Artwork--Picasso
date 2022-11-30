@@ -112,7 +112,19 @@ public class ImageJdbcRepository implements ImageRepository {
 
     @Override
     public void updateImage(String id, String title, String description, String owner) {
+        String SQL = "UPDATE image SET id = ?, title = ?, description = ? WHERE owner = ?;";
 
+        try(Connection con = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)){
+            PreparedStatement st = con.prepareStatement(SQL);
+            st.setString(1, id);
+            st.setString(2, title);
+            st.setString(3, description);
+            st.setString(4, owner);
+
+            st.executeUpdate();  //here we can have problem wit already existing id- TODO: check if we catch this type of error
+        } catch (SQLException e) {
+            throw new RuntimeException(getClass().getSimpleName() + " " + SQL + ": " + e.getSQLState());
+        }
     }
 
     @Override
