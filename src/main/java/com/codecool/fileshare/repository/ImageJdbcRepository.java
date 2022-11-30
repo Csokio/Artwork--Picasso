@@ -1,8 +1,10 @@
 package com.codecool.fileshare.repository;
 
+import com.codecool.fileshare.exception.ImageAlreadyInDatabaseException;
 import com.codecool.fileshare.model.Image;
 import org.springframework.stereotype.Component;
 
+import java.sql.*;
 import java.util.List;
 
 @Component("jdbc")
@@ -21,7 +23,28 @@ public class ImageJdbcRepository implements ImageRepository {
 
     @Override
     public String storeImageFile(String title, String description, String owner, byte[] content, String extension) {
-        return null;
+
+        final String SQL = "INSERT INTO image(title, description, owner, content, extension) VALUES (?, ?, ?, ?, ?) RETURNING id;";
+
+        String uuid;
+
+        try(Connection con = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
+            PreparedStatement st = con.prepareStatement(SQL);
+            st.setString(1, title);
+            st.setString(2, description);
+            st.setString(3, owner);
+            st.setBytes(4, content);
+            st.setString(5, extension);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()){
+                uuid = rs.getObject("id", java.util.UUID.class).toString();
+            } else {
+                throw new ImageAlreadyInDatabaseException("This image has already been saved");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(getClass().getSimpleName() + " " + SQL + ": " + e.getSQLState());
+        }
+        return uuid;
     }
 
     @Override
