@@ -54,7 +54,29 @@ public class ImageJdbcRepository implements ImageRepository {
 
     @Override
     public List<Image> getAll(String owner) {
-        return null;
+        List<Image> imageList = new ArrayList<>();
+
+        String SQL = "SELECT id, title, description, extension " +
+                "FROM image JOIN app_user ON ap.email  = i.owner " +
+                "WHERE owner = ?;";
+
+        try (Connection con = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
+            PreparedStatement pst = con.prepareStatement(SQL);
+            ResultSet rs = pst.executeQuery();
+            Image image;
+            while (rs.next()) {
+                image = new Image(
+                        rs.getObject("id", UUID.class).toString(),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getString("extension")
+                );
+                imageList.add(image);
+            }
+        } catch (SQLException sqle) {
+            throw new RuntimeException(getClass().getSimpleName() + " " + SQL + ": " + sqle.getSQLState());
+        }
+        return imageList;
     }
 
     @Override
