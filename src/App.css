@@ -1,0 +1,27 @@
+body {
+  width: 100vw;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%) fixed;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(8px);
+}
