@@ -1,8 +1,10 @@
 package com.codecool.fileshare.service;
 
+import com.codecool.fileshare.dto.ImageDataDTO;
 import com.codecool.fileshare.dto.UserDTO;
 import com.codecool.fileshare.exception.UserAlreadyExistsException;
 import com.codecool.fileshare.model.AppUser;
+import com.codecool.fileshare.model.Image;
 import com.codecool.fileshare.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -37,8 +39,15 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserDTO> getAll(){
-
-        return null;
+        List<UserDTO> userDTOs = new ArrayList<>();
+        List<AppUser> users = userRepository.getAppUsers();
+        for (AppUser u : users) {
+            UserDTO userDTO = new UserDTO(
+                    u.getEmail()
+            );
+            userDTOs.add(userDTO);
+        }
+        return userDTOs;
     }
 
     @Override
