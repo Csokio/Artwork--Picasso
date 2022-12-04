@@ -10,12 +10,12 @@ import java.util.List;
 
 @Repository
 public class UserJdbcRepository implements UserRepository {
-    static final String ADDRESS = System.getenv("ADDRESS");
-    static final int PORT = Integer.parseInt(System.getenv("PORT"));
-    static final String USERNAME = System.getenv("USERNAME");
-    static final String PASSWORD = System.getenv("PASSWORD");
+    static final String ADDRESS = System.getenv("host");
+    static final int PORT = Integer.parseInt(System.getenv("port"));
+    static final String USERNAME = System.getenv("dbuser");
+    static final String PASSWORD = System.getenv("dbpassword");
 
-    static final String DB_NAME = "newimagedb";
+    static final String DB_NAME = System.getenv("dbname");
     static final String DB_TYPE = "jdbc:postgresql";
 
     static final String DB_URL = DB_TYPE + "://" + ADDRESS + ":" + PORT + "/" + DB_NAME;

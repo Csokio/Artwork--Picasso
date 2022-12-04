@@ -13,12 +13,12 @@ import java.util.UUID;
 @Component("jdbc")
 public class ImageJdbcRepository implements ImageRepository {
 
-    static final String ADDRESS = System.getenv("ADDRESS");
-    static final int PORT = Integer.parseInt(System.getenv("PORT"));
-    static final String USERNAME = System.getenv("USERNAME");
-    static final String PASSWORD = System.getenv("PASSWORD");
+    static final String ADDRESS = System.getenv("host");
+    static final int PORT = Integer.parseInt(System.getenv("port"));
+    static final String USERNAME = System.getenv("dbuser");
+    static final String PASSWORD = System.getenv("dbpassword");
 
-    static final String DB_NAME = "newimagedb";
+    static final String DB_NAME = System.getenv("dbname");
     static final String DB_TYPE = "jdbc:postgresql";
 
     static final String DB_URL = DB_TYPE + "://" + ADDRESS + ":" + PORT + "/" + DB_NAME;
@@ -29,7 +29,7 @@ public class ImageJdbcRepository implements ImageRepository {
 
         final String SQL = "INSERT INTO image(title, description, owner, content, extension) VALUES (?, ?, ?, ?, ?) RETURNING id;";
 
-        String uuid;
+        UUID uuid;
 
         try(Connection con = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
             PreparedStatement st = con.prepareStatement(SQL);
@@ -40,30 +40,29 @@ public class ImageJdbcRepository implements ImageRepository {
             st.setString(5, extension);
             ResultSet rs = st.executeQuery();
             if (rs.next()){
-                uuid = rs.getObject("id", java.util.UUID.class).toString();
+                uuid = rs.getObject("id", java.util.UUID.class);
             } else {
                 throw new ImageAlreadyInDatabaseException("This image has already been saved");
             }
         } catch (SQLException e) {
             throw new RuntimeException(getClass().getSimpleName() + " " + SQL + ": " + e.getSQLState());
         }
-        return uuid;
+        return uuid.toString();
     }
 
     @Override
     public boolean checkOwner(String owner, String id) {
 
-        String SQL = "SELECT id " +
-                "FROM image JOIN app_user ON ap.email  = i.owner " +
+        String SQL = "SELECT ? " +
+                "FROM image  " +
                 "WHERE owner = ?;";
 
         try (Connection con = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
             PreparedStatement st = con.prepareStatement(SQL);
-            st.setString(1, owner);
+            st.setString(1, id);
+            st.setString(2, owner);
             ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                if (rs.getObject("id", java.util.UUID.class).toString() == id) return true;
-            }
+            if (rs.next()) return true;
         } catch (SQLException e) {
             throw new RuntimeException(getClass().getSimpleName() + " " + SQL + ": " + e.getSQLState());
         }
@@ -74,13 +73,12 @@ public class ImageJdbcRepository implements ImageRepository {
     public List<Image> getAll(String owner) {
         List<Image> imageList = new ArrayList<>();
 
-        String SQL = "SELECT id, title, description, extension " +
-                "FROM image JOIN app_user ON ap.email  = i.owner " +
-                "WHERE owner = ?;";
+        String SQL = "SELECT id, title, description, content, extension FROM image WHERE owner = ?;";
 
         try (Connection con = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
-            PreparedStatement pst = con.prepareStatement(SQL);
-            ResultSet rs = pst.executeQuery();
+            PreparedStatement ps = con.prepareStatement(SQL);
+            ps.setString(1, owner);
+            ResultSet rs = ps.executeQuery();
             Image image;
             while (rs.next()) {
                 image = new Image(
@@ -132,16 +130,20 @@ public class ImageJdbcRepository implements ImageRepository {
         byte[] bytearray = null;
         String SQL = "SELECT content FROM image WHERE id = ?;";
         try(Connection con = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
-            PreparedStatement statement = con.prepareStatement(SQL);
-            statement.setString(1,id);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                bytearray = rs.getBytes("content");
+            PreparedStatement st = con.prepareStatement(SQL);
+            st.setString(1,id);
+            ResultSet rs = st.executeQuery();
+            if (!rs.next()) {
+                return null;
             }
+             else{
+                 return rs.getBytes(1);
+            }
+
         } catch (SQLException e) {
             throw new RuntimeException(getClass().getSimpleName() + " " + SQL + ": " + e.getSQLState());
         }
-        return bytearray;
+
     }
 }
 

@@ -55,23 +55,19 @@ public class ImageService {
 
     public byte[] getImageFile(String filename) { //help: filename is for example 41d6608d-0803-4239-9235-09f902fbf705.jpg
 
-        try {
-            return Files.readAllBytes(Paths.get(filename));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            return imageRepository.getImageFile(filename.split(".")[0]);
     }
 
     public String storeFile(MultipartFile file, String title, String description, String owner) {
-        byte[] content;
+        //help: filename is for example 41d6608d-0803-4239-9235-09f902fbf705.jpg
 
+        byte[] content;
         try {
             content = file.getBytes();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        String extension= file.getName().split(".")[1];  // TODO: clarify: where does the uuid come from? FE? Do BE have to generate?
-        //help: filename is for example 41d6608d-0803-4239-9235-09f902fbf705.jpg
-        return imageRepository.storeImageFile(title, description, owner, content, extension);
+        String extension= file.getOriginalFilename().split("\\.")[1];
+        return imageRepository.storeImageFile(title, description, owner, content, extension) + "." + extension;
     }
 }
