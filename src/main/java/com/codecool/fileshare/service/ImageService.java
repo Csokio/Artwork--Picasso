@@ -55,7 +55,7 @@ public class ImageService {
 
     public byte[] getImageFile(String filename) { //help: filename is for example 41d6608d-0803-4239-9235-09f902fbf705.jpg
 
-            return imageRepository.getImageFile(filename.split(".")[0]);
+            return imageRepository.getImageFile(filename);
     }
 
     public String storeFile(MultipartFile file, String title, String description, String owner) {
