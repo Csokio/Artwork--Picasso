@@ -97,7 +97,7 @@ public class ImageJdbcRepository implements ImageRepository {
 
     @Override
     public void delete(String uuid, String owner) {
-        String SQL = "DELETE FROM image WHERE uuid = ? AND owner = ?;";
+        String SQL = "DELETE FROM image WHERE id::text = ? AND owner = ?;";
         try (Connection con = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
             PreparedStatement pt = con.prepareStatement(SQL);
             pt.setString(1, uuid);
