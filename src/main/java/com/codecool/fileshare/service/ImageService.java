@@ -51,7 +51,7 @@ public class ImageService {
 
     public void updateCategory(String id, ImageUpdateDTO imageUpdateDTO, String owner) {
 
-        imageRepository.updateImage(id, imageUpdateDTO.getTitle(), imageUpdateDTO.getDescription(), owner);
+        imageRepository.updateImage(id, imageUpdateDTO.getTitle(), imageUpdateDTO.getDescription(), imageUpdateDTO.getTags(), owner);
     }
 
     public byte[] getImageFile(String filename) { //help: filename is for example 41d6608d-0803-4239-9235-09f902fbf705.jpg
