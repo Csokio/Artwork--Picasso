@@ -7,7 +7,13 @@ import styles from "./Gallery.module.css";
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
-
+import { StyledEngineProvider } from '@mui/material/styles';
+import Backdrop from '@mui/material/Backdrop';
+import Modal from '@mui/material/Modal';
+import Fade from '@mui/material/Fade';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Label = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -31,32 +37,63 @@ function Gallery({ data }) {
     { title: 'Pulp Fiction', year: 1994 }
 ]
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
 const clickHandler = (item) => {
   setItem(item)
-  setMakeLarge(!makeLarge);
-  console.log('clickHandler log',item);
+  handleOpen()
 }
 
+const loadHandler = () => {
+  setLoading(!loading);
+}
 
-const [makeLarge, setMakeLarge] = React.useState(false);
 const [item, setItem] = React.useState([]);
+const [open, setOpen] = React.useState(false);
+const handleOpen = () => setOpen(true);
+const handleClose = () => setOpen(false);
+const [loading, setLoading] = React.useState(false);
+
+
   return (
     <>
+    <StyledEngineProvider injectFirst>
       <div id={styles.wrapper}>
-        <ImageList   variant="masonry" cols={4} gap={20}>
+      
+        <ImageList id={styles.gallery}  variant="masonry" cols={4} gap={15} >
           {data.map((item, index) => (
             <GalleryCard 
             clickHandler={clickHandler}
             item={item} key={index}/>
           ))}
         </ImageList>
+        
       </div>
 
-      <div id="modal">
-          <img src={item ? '' : item.image} alt="" />
-          <h3>{item ? "" : item.title}</h3>
-          <h5>{item ? '' : item.artistName}</h5>
-          <h6>{item ? '' : item.completitionYear}</h6>
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={open}>
+          <Box sx={style}>
+          <img src={item.image} alt="" />
           <Autocomplete
             multiple
             id="tags-filled"
@@ -81,7 +118,14 @@ const [item, setItem] = React.useState([]);
               />
             )}
           />
-        </div>
+          <h3>{item.title}</h3>
+          <h5>{item.artistName}</h5>
+          <h6>{item.completitionYear}</h6>
+          </Box>
+        </Fade>
+      </Modal>
+      </StyledEngineProvider>
+      <button onClick={loadHandler}>{loading ? <CircularProgress size={30} /> : "Load more"}</button>
     </>
     
       );

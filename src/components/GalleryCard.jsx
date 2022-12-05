@@ -2,23 +2,94 @@ import React from "react";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import ImageList from "@mui/material/ImageList";
-import ImageListItemBar from '@mui/material/ImageListItemBar';
+import ImageListItemBar from "@mui/material/ImageListItemBar";
 import ImageListItem from "@mui/material/ImageListItem";
-import IconButton from '@mui/material/IconButton';
-import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
-import Favorite from '@mui/icons-material/Favorite';
+import IconButton from "@mui/material/IconButton";
+import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
+import Favorite from "@mui/icons-material/Favorite";
+import { StyledEngineProvider } from "@mui/material/styles";
 import styles from "./GalleryCard.module.css";
+import { style } from "@mui/system";
 
-
-const GalleryCard = ({item, clickHandler}) => {
-
-    const [favorite, setFavorite] = React.useState(false);
-    const favoriteHandler = () => {
-        setFavorite(!favorite);
+const GalleryCard = ({ item, clickHandler }) => {
+  const saveFavorite = async (item) => {
+    // UTILS
+    var processStatus = function (response) {
+      // process status
+      if (response.status === 200 || response.status === 0) {
+        return Promise.resolve(response);
+      } else {
+        return Promise.reject(new Error("Error loading: " + "harcsamacska"));
       }
+    };
 
-    return (
-        <ImageListItem>
+    var parseBlob = function (response) {
+      return response.blob();
+    };
+
+    var parseJson = function (response) {
+      return response.json();
+    };
+
+    const pictureUrl = item.image;
+
+    // download/upload
+    var downloadFile = function (pictureUrl) {
+      return fetch(pictureUrl).then(processStatus).then(parseBlob);
+    };
+
+    function uploadImageToBackend(blob) {
+      var formData = new FormData();
+      formData.append("title", item.title);
+      formData.append("year", item.completitionYear);
+      formData.append("artist", item.artistName);
+      formData.append("pictureId", item.id);
+      formData.append("artistId", item.artistId);
+      formData.append("image", blob);
+
+      return fetch("http://localhost:3333/saveFavorites", {
+        method: "POST",
+        body: formData,
+      })
+        .then(processStatus)
+        .then(parseJson);
+    }
+
+    // --- ACTION ---
+    var sourceImageUrl = pictureUrl;
+    console.log(
+      'Started downloading image from <a href="' +
+        sourceImageUrl +
+        '">https://www.wikiart.org/ API'
+    );
+
+    downloadFile(sourceImageUrl) // download file from one resource
+      .then(uploadImageToBackend); // upload it to another
+    console.log("Image uploaded to Backend</a>");
+  };
+
+  const deleteFavorite = async (item) => {
+    const pictureId = item.id;
+    const url = "http://localhost:3333/deleteFavorites";
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ pictureId }),
+    });
+  };
+
+  const [favorite, setFavorite] = React.useState(false);
+  const favoriteHandler = () => {
+    setFavorite(!favorite);
+    favorite ? deleteFavorite(item) : saveFavorite(item);
+  };
+
+  return (
+    <StyledEngineProvider injectFirst>
+      <ImageListItem id={styles.picturecard}>
+        <div id={styles.container}>
           <img
             onClick={() => clickHandler(item)}
             src={`${item.image}?w=248&fit=crop&auto=format`}
@@ -27,19 +98,15 @@ const GalleryCard = ({item, clickHandler}) => {
             loading="lazy"
           />
           <ImageListItemBar
-            sx={{
-              background:
-                "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
-                "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
-            }}
-            // title="Add to Favourite"
+            id={styles.topbar}
+            title={favorite ? "Remove from Favourite" : "Add to Favourite"}
             position="top"
             actionIcon={
               favorite ? (
                 <IconButton
                   className="icon"
                   onClick={() => favoriteHandler()}
-                  sx={{ color: "white" }}
+                  sx={{ color: "orangered" }}
                   aria-label={`star ${item.title}`}
                 >
                   <Favorite />
@@ -57,11 +124,13 @@ const GalleryCard = ({item, clickHandler}) => {
             }
             actionPosition="right"
           />
-          <h3>{item.title}</h3>
-          <h5>{item.artistName}</h5>
-          <h6>{item.completitionYear}</h6>
-        </ImageListItem>
-    );
-}
- 
+        </div>
+        <h2>{item.title}</h2>
+        <h4>{item.artistName}</h4>
+        <h5>{item.completitionYear}</h5>
+      </ImageListItem>
+    </StyledEngineProvider>
+  );
+};
+
 export default GalleryCard;

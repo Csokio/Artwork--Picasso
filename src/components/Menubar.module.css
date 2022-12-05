@@ -1,0 +1,21 @@
+#menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.198), transparent);
+  box-shadow: none;
+  backdrop-filter: blur(40px);
+  height: 80px;
+  padding: 0 20px 0 20px;
+}
+
+#search {
+  width: 800px;
+  transition: 0.3s ease-in-out;
+}
+
+#search:focus  {
+color: #1976d2;
+font-weight: bolder;
+}
