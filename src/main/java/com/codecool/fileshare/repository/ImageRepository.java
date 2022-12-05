@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ImageRepository {
 
-    String storeImageFile(String title, String description, String owner, byte[] content, String extension);
+    String storeImageFile(String title, String description, String owner, byte[] content, String extension, String tags);
 
     boolean checkOwner(String owner, String id);
 

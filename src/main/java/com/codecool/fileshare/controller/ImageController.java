@@ -64,8 +64,9 @@ public class ImageController {
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                    @RequestParam("title") String title,
                                    @RequestParam("description") String description,
+                                   @RequestParam(value = "tags", required = false) String tags,
                                    Authentication authentication) {
-        return imageService.storeFile(file,title, description, authentication.getName());
+        return imageService.storeFile(file,title, description, tags, authentication.getName());
 
     }
 }

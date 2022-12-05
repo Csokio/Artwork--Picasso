@@ -25,9 +25,9 @@ public class ImageJdbcRepository implements ImageRepository {
 
 
     @Override
-    public String storeImageFile(String title, String description, String owner, byte[] content, String extension) {
+    public String storeImageFile(String title, String description, String owner, byte[] content, String extension, String tags) {
 
-        final String SQL = "INSERT INTO image(title, description, owner, content, extension) VALUES (?, ?, ?, ?, ?) RETURNING id;";
+        final String SQL = "INSERT INTO image(title, description, owner, content, extension, tags) VALUES (?, ?, ?, ?, ?, ?) RETURNING id;";
 
         UUID uuid;
 
@@ -38,6 +38,7 @@ public class ImageJdbcRepository implements ImageRepository {
             st.setString(3, owner);
             st.setBytes(4, content);
             st.setString(5, extension);
+            st.setString(6, tags);
             ResultSet rs = st.executeQuery();
             if (rs.next()){
                 uuid = rs.getObject("id", java.util.UUID.class);
@@ -73,7 +74,7 @@ public class ImageJdbcRepository implements ImageRepository {
     public List<Image> getAll(String owner) {
         List<Image> imageList = new ArrayList<>();
 
-        String SQL = "SELECT id, title, description, content, extension FROM image WHERE owner = ?;";
+        String SQL = "SELECT id, title, description, content, tags, extension FROM image WHERE owner = ?;";
 
         try (Connection con = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
             PreparedStatement ps = con.prepareStatement(SQL);
@@ -85,6 +86,7 @@ public class ImageJdbcRepository implements ImageRepository {
                         rs.getObject("id", UUID.class).toString(),
                         rs.getString("title"),
                         rs.getString("description"),
+                        rs.getString("tags"),
                         rs.getString("extension")
                 );
                 imageList.add(image);
@@ -110,7 +112,7 @@ public class ImageJdbcRepository implements ImageRepository {
 
     @Override
     public void updateImage(String id, String title, String description, String owner) {
-        String SQL = "UPDATE image SET id = ?, title = ?, description = ? WHERE owner = ?;";
+        String SQL = "UPDATE image SET id::text = ?, title = ?, description = ? WHERE owner = ?;";
 
         try(Connection con = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)){
             PreparedStatement st = con.prepareStatement(SQL);
@@ -119,7 +121,7 @@ public class ImageJdbcRepository implements ImageRepository {
             st.setString(3, description);
             st.setString(4, owner);
 
-            st.executeUpdate();  //here we can have problem wit already existing id- TODO: check if we catch this type of error
+            st.executeUpdate();  //here we can have problem with already existing id- TODO: check if we catch this type of error
         } catch (SQLException e) {
             throw new RuntimeException(getClass().getSimpleName() + " " + SQL + ": " + e.getSQLState());
         }

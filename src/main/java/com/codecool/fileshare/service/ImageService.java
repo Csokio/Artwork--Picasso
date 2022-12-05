@@ -31,6 +31,7 @@ public class ImageService {
                     i.getId(),
                     i.getTitle(),
                     i.getDescription(),
+                    i.getTags(),
                     imgUrl
             );
             imageDTOs.add(imageDataDTO);
@@ -58,7 +59,7 @@ public class ImageService {
             return imageRepository.getImageFile(filename);
     }
 
-    public String storeFile(MultipartFile file, String title, String description, String owner) {
+    public String storeFile(MultipartFile file, String title, String description, String tags, String owner) {
         //help: filename is for example 41d6608d-0803-4239-9235-09f902fbf705.jpg
 
         byte[] content;
@@ -68,6 +69,6 @@ public class ImageService {
             throw new RuntimeException(e);
         }
         String extension= file.getOriginalFilename().split("\\.")[1];
-        return imageRepository.storeImageFile(title, description, owner, content, extension) + "." + extension;
+        return imageRepository.storeImageFile(title, description, owner, content, extension, tags) + "." + extension;
     }
 }
