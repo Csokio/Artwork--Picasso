@@ -7,25 +7,16 @@ import styles from "./Gallery.module.css";
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
+import Modal from "@mui/material/Modal";
+import Backdrop from "@mui/material/Backdrop";
+import Box from "@mui/material/Box";
+import Fade from "@mui/material/Fade";
 import { StyledEngineProvider } from '@mui/material/styles';
-import Backdrop from '@mui/material/Backdrop';
-import Modal from '@mui/material/Modal';
-import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import CircularProgress from "@mui/material/CircularProgress";
 
-const Label = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(0.5),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-  borderBottomLeftRadius: 0,
-  borderBottomRightRadius: 0,
-}));
 
-function Gallery({ data }) {
+function Gallery({ favorites, isFavorites, loginPopUp, mostViewed, isData, searchArtist, isSearchArtist, searchTerm, isSearchTerm, token}) {
   
   const top100Films = [
     { title: 'The Shawshank Redemption', year: 1994 },
@@ -36,6 +27,22 @@ function Gallery({ data }) {
     { title: "Schindler's List", year: 1993 },
     { title: 'Pulp Fiction', year: 1994 }
 ]
+
+const clickHandler = (item) => {
+  setItem(item)
+ token ? handleOpen() : loginPopUp()
+  
+}
+
+const loadHandler = () => {
+  setLoading(!loading);
+}
+
+const [item, setItem] = React.useState([]);
+const [open, setOpen] = React.useState(false);
+const handleOpen = () => setOpen(true);
+const handleClose = () => setOpen(false);
+const [loading, setLoading] = React.useState(false);
 
 const style = {
   position: 'absolute',
@@ -49,37 +56,47 @@ const style = {
   p: 4,
 };
 
-const clickHandler = (item) => {
-  setItem(item)
-  handleOpen()
-}
-
-const loadHandler = () => {
-  setLoading(!loading);
-}
-
-const [item, setItem] = React.useState([]);
-const [open, setOpen] = React.useState(false);
-const handleOpen = () => setOpen(true);
-const handleClose = () => setOpen(false);
-const [loading, setLoading] = React.useState(false);
-
-
   return (
     <>
     <StyledEngineProvider injectFirst>
-      <div id={styles.wrapper}>
-      
+      <div id={styles.wrapper}>      
         <ImageList id={styles.gallery}  variant="masonry" cols={4} gap={15} >
-          {data.map((item, index) => (
+          {isData && !isSearchArtist && !isSearchTerm &&
+          mostViewed.data.map((item, index) => (
             <GalleryCard 
+            token ={token}
+            loginPopUp={loginPopUp}
+            clickHandler={clickHandler}
+            item={item} key={index}/>
+          ))}
+          {!isData && isSearchArtist && !isSearchTerm && searchArtist.data != undefined &&
+          searchArtist.data.map((item, index) => (
+            <GalleryCard 
+            token ={token}
+            loginPopUp={loginPopUp}
+            clickHandler={clickHandler}
+            item={item} key={index}/>
+          ))}
+          {!isData && !isSearchArtist && isSearchTerm && searchTerm.data != undefined &&
+          searchTerm.data.map((item, index) => (
+            <GalleryCard 
+            token ={token}
+            loginPopUp={loginPopUp}
+            clickHandler={clickHandler}
+            item={item} key={index}/>
+          ))}
+           {!isData && !isSearchArtist && !isSearchTerm && isFavorites && favorites != undefined &&
+          favorites.map((item, index) => (
+            <GalleryCard 
+            token ={token}
+            loginPopUp={loginPopUp}
             clickHandler={clickHandler}
             item={item} key={index}/>
           ))}
         </ImageList>
-        
       </div>
-
+      </StyledEngineProvider>
+      <button onClick={loadHandler}>{loading ? <CircularProgress size={30} /> : "Load more"}</button>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -93,39 +110,35 @@ const [loading, setLoading] = React.useState(false);
       >
         <Fade in={open}>
           <Box sx={style}>
-          <img src={item.image} alt="" />
-          <Autocomplete
-            multiple
-            id="tags-filled"
-            options={top100Films.map((option) => option.title)}
-            defaultValue={[top100Films[1].title]}
-            freeSolo
-            renderTags={(value, getTagProps) =>
-              value.map((option, index) => (
-                <Chip
-                  variant="outlined"
-                  label={option}
-                  {...getTagProps({ index })}
-                />
-              ))
-            }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="filled"
-                label="freeSolo"
-                placeholder="Favorites"
-              />
-            )}
+           <img src={item.image} alt={item.title} />
+           <h2>{item.title}</h2>
+           <h2>{item.artistName}</h2>
+           <h2>{item.completitionYear}</h2>
+           <Autocomplete
+        multiple
+        id="tags-filled"
+        options={top100Films.map((option) => option.title)}
+        defaultValue={[top100Films[5].title]}
+        freeSolo
+        renderTags={(value, getTagProps) =>
+          value.map((option, index) => (
+            <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+          ))
+        }
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="filled"
+            label="freeSolo"
+            placeholder="Favorites"
           />
-          <h3>{item.title}</h3>
-          <h5>{item.artistName}</h5>
-          <h6>{item.completitionYear}</h6>
+         
+        )}
+      />
+       <button>Save Artwork</button>
           </Box>
         </Fade>
       </Modal>
-      </StyledEngineProvider>
-      <button onClick={loadHandler}>{loading ? <CircularProgress size={30} /> : "Load more"}</button>
     </>
     
       );

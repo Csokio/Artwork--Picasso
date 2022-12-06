@@ -7,11 +7,14 @@ import ImageListItem from "@mui/material/ImageListItem";
 import IconButton from "@mui/material/IconButton";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Favorite from "@mui/icons-material/Favorite";
+import HeartBroken from "@mui/icons-material/HeartBroken";
 import { StyledEngineProvider } from "@mui/material/styles";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import styles from "./GalleryCard.module.css";
 import { style } from "@mui/system";
 
-const GalleryCard = ({ item, clickHandler }) => {
+const GalleryCard = ({ item, clickHandler, token, loginPopUp }) => {
   const saveFavorite = async (item) => {
     // UTILS
     var processStatus = function (response) {
@@ -83,6 +86,7 @@ const GalleryCard = ({ item, clickHandler }) => {
   const [favorite, setFavorite] = React.useState(false);
   const favoriteHandler = () => {
     setFavorite(!favorite);
+    token;
     favorite ? deleteFavorite(item) : saveFavorite(item);
   };
 
@@ -99,14 +103,22 @@ const GalleryCard = ({ item, clickHandler }) => {
           />
           <ImageListItemBar
             id={styles.topbar}
-            title={favorite ? "Remove from Favourite" : "Add to Favourite"}
             position="top"
             actionIcon={
-              favorite ? (
+              !token ? (
                 <IconButton
                   className="icon"
-                  onClick={() => favoriteHandler()}
-                  sx={{ color: "orangered" }}
+                  onClick={loginPopUp}
+                  sx={{ color: "whitesmoke" }}
+                  aria-label={`star ${item.title}`}
+                >
+                  <HeartBroken />
+                </IconButton>
+              ) : favorite ? (
+                <IconButton
+                  className="icon"
+                  onClick={favoriteHandler}
+                  sx={{ color: "white" }}
                   aria-label={`star ${item.title}`}
                 >
                   <Favorite />

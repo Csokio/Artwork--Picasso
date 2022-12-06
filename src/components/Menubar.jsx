@@ -11,26 +11,38 @@ import { StyledEngineProvider } from '@mui/material/styles';
 import styles from "./Menubar.module.css";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
+// AVATAR COLORING
+function stringToColor(string) {
+  let hash = 0;
+  let i;
 
-function ResponsiveAppBar({ artists, onChange, onInput }) {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  /* eslint-disable no-bitwise */
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
+  let color = '#';
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.slice(-2);
+  }
+  /* eslint-enable no-bitwise */
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+  return color;
+}
+
+function stringAvatar(name) {
+  return {
+    sx: {
+      bgcolor: stringToColor(name),
+    },
+    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
   };
-  
+}
+
+function ResponsiveAppBar({ artists, onChange, onInput, tokenHandler, loginPopUp, drawerMenuHandler, token }) {
+ 
   const options = artists.map((option, index) => {
     const firstLetter = option.artistName[0].toUpperCase();
     return {
@@ -39,29 +51,25 @@ function ResponsiveAppBar({ artists, onChange, onInput }) {
       ...option,
     };
   });
-
   const [value, setValue] = React.useState(options[0]);
   const [inputValue, setInputValue] = React.useState("");
 
+
   return (
     <StyledEngineProvider injectFirst>
-    <AppBar id={styles.menu} position="sticky">
-    <IconButton className="icon"
-                  sx={{ color: "white" }}
-                  >
-      <Menu/>
-      </IconButton>
+    <AppBar id={styles.menu}>
+     <div></div>
             <Autocomplete id={styles.search} 
               value={value}
               onChange={(event, newValue) => {
                 setValue(newValue);
                 onChange(newValue)
-                // console.log("newValue", newValue);
               }}
               inputValue={inputValue}
               onInputChange={(event, newInputValue) => {
-                setInputValue(newInputValue);
-                onInput(newInputValue)
+                if (newInputValue !== 'undefined')
+                  setInputValue(newInputValue);
+                  onInput(newInputValue)
               }}
               freeSolo
               size="small"
@@ -81,10 +89,10 @@ function ResponsiveAppBar({ artists, onChange, onInput }) {
                   }}
                 />
               )}
-            />
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="" />
-              </IconButton>
+            /> {token ? 
+              <IconButton onClick={drawerMenuHandler} sx={{ p: 0 }}>
+                <Avatar {...stringAvatar('Lendvai András')} />
+              </IconButton> : <button onClick={loginPopUp}>Sign UP</button>}
     </AppBar>
     </StyledEngineProvider>
   );

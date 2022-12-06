@@ -164,6 +164,34 @@ app.post("/pbsearch", (req, res) => {
 
 // FOR PRESENTATION ONLY
 
+app.post('/api/signup', (req, res) => {
+
+  const data = fs.readFileSync("./demo/users.json");
+  const users = JSON.parse(data);
+  const match = users.filter(user => user.username === req.body.username)
+  if (match.length > 0) {
+    return res.sendStatus(400)
+  }
+
+  console.log(users.length);
+  let id = 0
+  users.length===0 ? id = 0 : id = users[users.length-1].id
+  const newUser = {
+    id: id+1,
+    username: req.body.username,
+    password:  req.body.password
+  }
+  users.push(newUser)
+  let newData = JSON.stringify(users);
+  fs.writeFileSync("./demo/users.json", newData);
+  
+
+  // fs.writeFileSync(`../../data/counter.json`, JSON.stringify(counter))
+  // let newDelete = favoriteJson.filter((image) => image.id !== id);
+  
+  res.sendStatus(204)
+})
+
 app.post("/saveFavorites", (req, res) => {
   const data = fs.readFileSync("./demo/favorites.json");
   const favoriteJson = JSON.parse(data);
@@ -194,7 +222,7 @@ app.post("/deleteFavorites", (req, res) => {
   const favoriteJson = JSON.parse(data);
 
   const id = req.body.pictureId
-console.log(id);
+  console.log(id);
   let newDelete = favoriteJson.filter((image) => image.id !== id);
   let newData = JSON.stringify(newDelete);
   fs.writeFileSync("./demo/favorites.json", newData);
