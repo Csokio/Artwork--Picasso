@@ -1,0 +1,11 @@
+[
+  { "id": 1, "username": "beela", "password": "123" },
+  { "id": 2, "username": "joozsi", "password": "123" },
+  { "id": 3, "username": "erzsi", "password": "123" },
+  { "id": 4, "username": "mari", "password": "123" },
+  { "id": 5, "username": "manci", "password": "123" },
+  { "id": 6, "username": "bence", "password": "123" },
+  { "id": 7, "username": "proxima", "password": "123" },
+  { "id": 8, "username": "beluska", "password": "123" },
+  { "id": 9, "username": "doncike", "password": "123" }
+]
