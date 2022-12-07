@@ -5,49 +5,50 @@ import getData from "./utility/getMostViewed";
 import getArtists from "./utility/getArtists";
 import Gallery from "./components/Gallery.jsx";
 import Menubar from "./components/Menubar.jsx";
-import Backdrop from '@mui/material/Backdrop';
-import Modal from '@mui/material/Modal';
-import Fade from '@mui/material/Fade';
-import Box from '@mui/material/Box';
+import Backdrop from "@mui/material/Backdrop";
+import Modal from "@mui/material/Modal";
+import Fade from "@mui/material/Fade";
+import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import DrawerMenu from "./components/DrawerMenu";
 import getFavouritePictures from "./utility/getFavoritPictures";
 
 const App = () => {
+  // LOGIN & SIGNUP & MODAL
 
-// LOGIN & SIGNUP & MODAL 
-
-const loginPopUp = () => {
-  setOpen(true)
-}
+  const loginPopUp = () => {
+    setOpen(true);
+  };
 
   const signup = async (username, password) => {
-    const response = await fetch ("http://localhost:3333/api/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },  
-        body : JSON.stringify({username, password})    
-    })
-    return  response.status
-  }
+    const response = await fetch("http://localhost:3333/api/signup", {
+    // const response = await fetch("http://backendpicasso.duckdns.org:8080/api/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    return response.status;
+  };
 
   const signupHandler = async () => {
-    const response = await signup(username, password)
-    setUsername("")
-    setPassword("")
-    response === 204 ? alert("Signup done") : alert("Username already in use")
-    setPage("login")
-  }
+    const response = await signup(username, password);
+    setUsername("");
+    setPassword("");
+    response === 204 ? alert("Signup done") : alert("Username already in use");
+    setPage("login");
+  };
 
   const login = async (username, password) => {
-    const response = await fetch ("http://localhost:3333/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },  
-        body : JSON.stringify({username, password})    
-    })
+    const response = await fetch("http://localhost:3333/api/login", {
+    // const response = await fetch("http://backendpicasso.duckdns.org:8080/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
 
-    const id = await response.json()
-    return id
-  }
+    const id = await response.json();
+    return id;
+  };
 
   const loginHandler = async () => {
     // const userId = await login()
@@ -55,43 +56,47 @@ const loginPopUp = () => {
     //   return alert("Wrong credentials")
     // }
     // localStorage.setItem("sessionId", userId)
-    const token = await login(username, password)
-    tokenHandler(token)
-    setUsername("")
-    setPassword("")
-    alert("Login done")
-  }
-
-  const tokenHandler = (token) => {
-    setToken(token)
-  }
-  const [token, setToken] = useState("")
-  const [ page, setPage ] = React.useState("signup")
-  const [ username, setUsername ] = React.useState("")
-  const [ password, setPassword ] = React.useState("")
-  const [open, setOpen] = React.useState(false);
-  const handleClose = () => setOpen(false);
- const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
+    const token = await login(username, password);
+    tokenHandler(token);
+    setUsername("");
+    setPassword("");
+    alert("Login done");
   };
 
+  const tokenHandler = (token) => {
+    setToken(token);
+  };
+  const [token, setToken] = useState("");
+  const [page, setPage] = React.useState("login");
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [open, setOpen] = React.useState(false);
+  const handleClose = () => setOpen(false);
+
+  const style = {
+    display: "flex",
+    justifyContent: "center",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 350,
+    height: 450,
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    outline: "none",
+    p: 4,
+    borderRadius: 2,
+  };
 
   // DRAWER MENU
   const [drawerMenu, setDrawerMenu] = useState(false);
 
   const drawerMenuHandler = () => {
-    setDrawerMenu(!drawerMenu)
-  }
+    setDrawerMenu(!drawerMenu);
+  };
 
-// DATA MANAGMENT
+  // DATA MANAGMENT
 
   const [mostViewed, setMostViewed] = useState([]);
   const [isData, setIsData] = useState(true);
@@ -113,22 +118,20 @@ const loginPopUp = () => {
     init();
   }, []);
 
-// DATA FETCH
+  // DATA FETCH
 
-const fetchFavorites = async () => {
-  setFavorites(await getFavouritePictures(token))
-  setIsFavorites(!isFavorites) 
-  setIsData(false)
-  setisSearchArtist(false)
-  setIsSearchTerm(false)
-}
+  const fetchFavorites = async () => {
+    setFavorites(await getFavouritePictures(token));
+    setIsFavorites(!isFavorites);
+    setIsData(false);
+    setisSearchArtist(false);
+    setIsSearchTerm(false);
+  };
 
   const getArtsByPainterId = async (artist) => {
     setIsOn(!isOn);
-    setIsData(false);
-    setisSearchArtist(true);
-    setIsSearchTerm(false);
     const url = "http://localhost:3333/pba";
+    // const url = "https://wikiartsproxyserver-hxvu2.ondigitalocean.app/pba";
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -136,17 +139,17 @@ const fetchFavorites = async () => {
     });
 
     const artistPaintings = await response.json();
-    console.log(artistPaintings);
     setSearchArtist(artistPaintings);
+    setisSearchArtist(true);
+    setIsData(false);
+    setIsSearchTerm(false);
     setIsOn(false);
   };
 
   const getArtsByKeyWord = async (term) => {
     setIsOn(!isOn);
-    setIsData(false);
-    setisSearchArtist(false);
-    setIsSearchTerm(true);
     const url = "http://localhost:3333/pbsearch";
+    // const url = "https://wikiartsproxyserver-hxvu2.ondigitalocean.app/pbsearch";
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -155,16 +158,25 @@ const fetchFavorites = async () => {
 
     const searchTerm = await response.json();
     term === "" ? setSearchTerm(mostViewed) : setSearchTerm(searchTerm);
+    setIsSearchTerm(true);
+    setIsData(false);
+    setisSearchArtist(false);
     setIsOn(false);
   };
 
   return (
     <>
-   <DrawerMenu  drawerMenu={drawerMenu} fetchFavorites={fetchFavorites}/>
+      <DrawerMenu
+        drawerMenu={drawerMenu}
+        setDrawerMenu={setDrawerMenu}
+        fetchFavorites={fetchFavorites}
+        setToken={setToken}
+      />
       <Menubar
-      loginPopUp={loginPopUp}
-      token={token}
-      drawerMenuHandler={drawerMenuHandler}
+        username={username}
+        loginPopUp={loginPopUp}
+        token={token}
+        drawerMenuHandler={drawerMenuHandler}
         onChange={getArtsByPainterId}
         onInput={getArtsByKeyWord}
         tokenHandler={tokenHandler}
@@ -190,7 +202,7 @@ const fetchFavorites = async () => {
           <CircularProgress size={170} />
         </div>
       )}
-       <Modal
+      <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={open}
@@ -199,43 +211,69 @@ const fetchFavorites = async () => {
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 500,
-        }}
+          style: {backdropFilter: 'blur(12px)',
+          background: `linear-gradient(
+            0deg,
+            rgba(0, 16, 54, 0.617),
+            rgba(0, 0, 0, 0.244)`,
+         } }}
       >
         <Fade in={open}>
           <Box sx={style}>
-          { page === "signup" && (
-        <main>
-          <p>Signup</p>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={e => setUsername(e.target.value)}/>
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}/>
-          <button onClick={signupHandler}>Signup</button>
-          <button onClick={() => setPage("login")}>To login</button>
-        </main>)}
-      
-      { page === "login" && (
-        <main>
-          <p>Login</p>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={e => setUsername(e.target.value)}/>
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}/>
-          <button onClick={loginHandler}>Login</button>
-          <button onClick={() => setPage("signup")}>To signup</button>
-        </main>)}
+            {page === "signup" && (
+              <main id="form">
+                <h1>Sign up</h1>
+                <input
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button id="signupb" onClick={signupHandler}>
+                  Sign Up
+                </button>
+                <button id="loginb" onClick={() => setPage("login")}>
+                  Log in
+                </button>
+              </main>
+            )}
+
+            {page === "login" && (
+              <main id="form">
+                <h1>Log in</h1>
+                <input
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  id="loginb2"
+                  onClick={() => {
+                    loginHandler();
+                    handleClose()
+                  }}
+                >
+                  Log in
+                </button>
+                <p>Don't have an account?</p>
+                <button id="signupb2" onClick={() => setPage("signup")}>
+                  Sign Up
+                </button>
+              </main>
+            )}
           </Box>
         </Fade>
       </Modal>

@@ -8,7 +8,6 @@ body::-webkit-scrollbar {
   display: none;
 }
 
-
 #root {
   display: flex;
   flex-direction: column;
@@ -24,4 +23,86 @@ body::-webkit-scrollbar {
   width: 100vw;
   height: 100vh;
   backdrop-filter: blur(8px);
+}
+
+#form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#form input {
+  width: 250px;
+  height: 35px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+#form h1 {
+  color: blue;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+#form p {
+  margin: 20px;
+  font-weight: bold;
+}
+
+#signupb {
+  background-color: blue;
+  font-size: 1.1rem;
+  padding: 8px;
+  width: 90px;
+  border-radius: 4px;
+  border: solid 2px blue;
+  color: whitesmoke;
+  margin-bottom: 5px;
+  transition: 0.4s ease-in-out;
+}
+
+#signupb:hover {
+  background-color: transparent;
+  color: blue;
+}
+
+#loginb {
+  background-color: transparent;
+  font-size: 1.1rem;
+  width: 90px;
+  padding: 8px;
+  border-radius: 4px;
+  border: solid 2px blue;
+  color: blue;
+  margin-top: 30px;
+  transition: 0.4s ease-in-out;
+}
+
+#loginb:hover {
+  color: whitesmoke;
+  background-color: blue;
+}
+
+#loginb2 {
+  background-color: blue;
+  font-size: 1.1rem;
+  padding: 8px;
+  width: 90px;
+  border-radius: 4px;
+  border: solid 2px blue;
+  color: whitesmoke;
+  transition: 0.4s ease-in-out;
+}
+
+#signupb2 {
+  background-color: transparent;
+  font-size: 1.1rem;
+  padding: 8px;
+  width: 90px;
+  border-radius: 4px;
+  border: solid 2px blue;
+  color: blue;
+  margin-bottom: 5px;
+  transition: 0.4s ease-in-out;
 }

@@ -41,7 +41,7 @@ function stringAvatar(name) {
   };
 }
 
-function ResponsiveAppBar({ artists, onChange, onInput, tokenHandler, loginPopUp, drawerMenuHandler, token }) {
+function ResponsiveAppBar({ artists, onChange, onInput, tokenHandler, loginPopUp, drawerMenuHandler, token, username }) {
  
   const options = artists.map((option, index) => {
     const firstLetter = option.artistName[0].toUpperCase();
@@ -91,8 +91,8 @@ function ResponsiveAppBar({ artists, onChange, onInput, tokenHandler, loginPopUp
               )}
             /> {token ? 
               <IconButton onClick={drawerMenuHandler} sx={{ p: 0 }}>
-                <Avatar {...stringAvatar('Lendvai András')} />
-              </IconButton> : <button onClick={loginPopUp}>Sign UP</button>}
+                <Avatar {...stringAvatar(`Andrew Lendvai`)} />
+              </IconButton> : <button id={styles.signupbutton}onClick={loginPopUp}>Log in</button>}
     </AppBar>
     </StyledEngineProvider>
   );

@@ -12,7 +12,6 @@ import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
 import { StyledEngineProvider } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 import CircularProgress from "@mui/material/CircularProgress";
 
 
@@ -25,7 +24,13 @@ function Gallery({ favorites, isFavorites, loginPopUp, mostViewed, isData, searc
     { title: 'The Dark Knight', year: 2008 },
     { title: '12 Angry Men', year: 1957 },
     { title: "Schindler's List", year: 1993 },
-    { title: 'Pulp Fiction', year: 1994 }
+    { title: 'Pulp Fiction', year: 1994 },
+    {
+      title: 'The Lord of the Rings: The Return of the King',
+      year: 2003,
+    },
+    { title: 'The Good, the Bad and the Ugly', year: 1966 },
+    { title: 'Fight Club', year: 1999 },
 ]
 
 const clickHandler = (item) => {
@@ -45,15 +50,18 @@ const handleClose = () => setOpen(false);
 const [loading, setLoading] = React.useState(false);
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
+  display: "flex",
+  justifyContent: "start",
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "80%",
+  height: "80%",
+  bgcolor: "background.paper",
   boxShadow: 24,
-  p: 4,
+  outline: "none",
+  borderRadius: 2,
 };
 
   return (
@@ -96,7 +104,7 @@ const style = {
         </ImageList>
       </div>
       </StyledEngineProvider>
-      <button onClick={loadHandler}>{loading ? <CircularProgress size={30} /> : "Load more"}</button>
+      {loading ? <CircularProgress size={30} /> : <button id={styles.loadbutton}onClick={loadHandler}>Load more</button>}
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -106,12 +114,22 @@ const style = {
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 500,
+          style: {backdropFilter: 'blur(12px)',
+          background: `linear-gradient(
+            0deg,
+            rgba(0, 16, 54, 0.617),
+            rgba(0, 0, 0, 0.244)`,
+         }
         }}
       >
         <Fade in={open}>
           <Box sx={style}>
-           <img src={item.image} alt={item.title} />
-           <h2>{item.title}</h2>
+          <div id={styles.modalleft}>
+           <img id={styles.modalimg} src={item.image} alt={item.title} />
+           </div>
+           <div id={styles.modalright}>
+            <div id={styles.container}>
+           <h1>{item.title}</h1>
            <h2>{item.artistName}</h2>
            <h2>{item.completitionYear}</h2>
            <Autocomplete
@@ -129,13 +147,16 @@ const style = {
           <TextField
             {...params}
             variant="filled"
-            label="freeSolo"
+            label="Tags"
             placeholder="Favorites"
           />
          
         )}
       />
-       <button>Save Artwork</button>
+       <button id={styles.savebutton}>Add to favorites</button>
+       <button id={styles.deletebutton}>Remove from favorites</button>
+       </div>
+       </div>
           </Box>
         </Fade>
       </Modal>
