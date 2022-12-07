@@ -5,7 +5,6 @@ const fs = require("fs");
 const cors = require("cors");
 const { response } = require("express");
 const fileUpload = require("express-fileupload");
-const { ConstructionOutlined } = require("@mui/icons-material");
 
 app.use(cors());
 app.use(express.json());
