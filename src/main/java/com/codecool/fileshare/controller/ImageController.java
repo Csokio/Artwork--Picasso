@@ -17,6 +17,7 @@ import java.util.List;
 
 
 @RestController
+@CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"})
 @RequestMapping(value = "/api/artwork")
 public class ImageController {
 
