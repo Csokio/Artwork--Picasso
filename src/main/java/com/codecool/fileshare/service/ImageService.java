@@ -32,7 +32,8 @@ public class ImageService {
                     i.getTitle(),
                     i.getDescription(),
                     i.getTags(),
-                    imgUrl
+                    imgUrl,
+                    i.getContent()
             );
             imageDTOs.add(imageDataDTO);
         }
