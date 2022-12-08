@@ -2,7 +2,6 @@ package com.codecool.fileshare.repository;
 
 import com.codecool.fileshare.exception.ImageAlreadyInDatabaseException;
 import com.codecool.fileshare.model.Image;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -95,6 +94,11 @@ public class ImageJdbcRepository implements ImageRepository {
             throw new RuntimeException(getClass().getSimpleName() + " " + SQL + ": " + sqle.getSQLState());
         }
         return imageList;
+    }
+
+    @Override
+    public List<Image> getAll() { // ez értelmetlen, csak a file-ból ki kellett szednem az ownert és így kellett ez ide
+        return null;
     }
 
     @Override

@@ -11,6 +11,7 @@ public interface ImageRepository {
     boolean checkOwner(String owner, String id);
 
     List<Image> getAll(String owner);
+    List<Image> getAll();
     void delete(String uuid, String owner); //only delete if owner matches
 
     void updateImage(String id, String title, String description, String tags, String owner); //updates, id, title. only update if owner matches
