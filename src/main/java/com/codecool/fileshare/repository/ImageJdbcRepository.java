@@ -144,7 +144,6 @@ public class ImageJdbcRepository implements ImageRepository {
         } catch (SQLException e) {
             throw new RuntimeException(getClass().getSimpleName() + " " + SQL + ": " + e.getSQLState());
         }
-
     }
 }
 
