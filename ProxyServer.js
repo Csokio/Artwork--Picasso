@@ -78,12 +78,12 @@ app.get("/artists", (req, res) => {
   res.json(storedArtists);
 });
 
-
 app.post("/pba", (req, res) => {
-  const id = req.body.artist.id;
+  console.log(req)
+  const id = req.body.artistid;
+  const nextPage = req.body.pagination;
   const getPainting = async () => {
-    artistResponse = await fetch(
-      `https://www.wikiart.org/en/api/2/PaintingsByArtist?id=${id}&imageFormat=HD`
+    artistResponse = await fetch(`https://www.wikiart.org/en/api/2/PaintingsByArtist?id=${id}&imageFormat=HD`
     );
     let artistResult = await artistResponse.json();
     res.json(artistResult);
@@ -107,49 +107,47 @@ app.post("/pbsearch", (req, res) => {
 
 // FOR PRESENTATION ONLY
 
-app.post('/api/signup', (req, res) => {
-
+app.post("/api/signup", (req, res) => {
   const data = fs.readFileSync("./demo/users.json");
   const users = JSON.parse(data);
-  const match = users.filter(user => user.username === req.body.username)
+  const match = users.filter((user) => user.username === req.body.username);
   if (match.length > 0) {
-    return res.sendStatus(400)
+    return res.sendStatus(400);
   }
 
   console.log(users.length);
-  let id = 0
-  users.length===0 ? id = 0 : id = users[users.length-1].id
+  let id = 0;
+  users.length === 0 ? (id = 0) : (id = users[users.length - 1].id);
   const newUser = {
-    id: id+1,
+    id: id + 1,
     username: req.body.username,
-    password:  req.body.password
-  }
-  users.push(newUser)
+    password: req.body.password,
+  };
+  users.push(newUser);
   let newData = JSON.stringify(users);
   fs.writeFileSync("./demo/users.json", newData);
-  
-  
-  res.sendStatus(204)
-})
+
+  res.sendStatus(204);
+});
 
 app.post("/api/login", (req, res) => {
-  const username = req.body.username
-  const password = req.body.password
+  const username = req.body.username;
+  const password = req.body.password;
 
-  const database = fs.readFileSync('./demo/users.json')
-  const users = JSON.parse(database)
-  
-  const user = users.find(user => user.username === username && user.password === password)
+  const database = fs.readFileSync("./demo/users.json");
+  const users = JSON.parse(database);
+
+  const user = users.find(
+    (user) => user.username === username && user.password === password
+  );
   if (!user) {
-    return res.sendStatus(401)
+    return res.sendStatus(401);
   }
 
-  const sessionId = user.id
-console.log(user.id)
-  res.json({sessionId: sessionId})
-})
-
-
+  const sessionId = user.id;
+  console.log(user.id);
+  res.json({ sessionId: sessionId });
+});
 
 app.post("/saveFavorites", (req, res) => {
   const data = fs.readFileSync("./demo/favorites.json");
@@ -170,9 +168,8 @@ app.post("/saveFavorites", (req, res) => {
   const newFavoriteData = JSON.stringify(favoriteJson);
   fs.writeFileSync("./demo/favorites.json", newFavoriteData);
 
-
-const image = req.files.image
-image.mv('./demo/images/' + pictureId + '.jpg')
+  const image = req.files.image;
+  image.mv("./demo/images/" + pictureId + ".jpg");
   res.sendStatus(200);
 });
 
@@ -180,24 +177,24 @@ app.post("/deleteFavorites", (req, res) => {
   const data = fs.readFileSync("./demo/favorites.json");
   const favoriteJson = JSON.parse(data);
 
-  const id = req.body.pictureId
+  const id = req.body.pictureId;
   let newDelete = favoriteJson.filter((image) => image.id !== id);
   let newData = JSON.stringify(newDelete);
   fs.writeFileSync("./demo/favorites.json", newData);
 
   const pictureUploadPath = `./demo/images/${id}.jpg`;
 
+  if (fs.existsSync(pictureUploadPath)) {
+    fs.unlinkSync(pictureUploadPath, (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send(err);
+      }
+    });
 
-if (fs.existsSync(pictureUploadPath)) {
-  fs.unlinkSync(pictureUploadPath, (err) => {
-    if (err) {
-      console.log(err);
-       res.status(500).send(err);
-    }
-  })
-
-  res.sendStatus(200)
-}});
+    res.sendStatus(200);
+  }
+});
 
 app.listen(3333, () => {
   console.log(`Megy az proxyServer a 3333-es porton`);
