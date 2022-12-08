@@ -16,5 +16,6 @@ public class Image {
     private String description;
     private String tags;
     private String extension;
+    private String content;
 
 }

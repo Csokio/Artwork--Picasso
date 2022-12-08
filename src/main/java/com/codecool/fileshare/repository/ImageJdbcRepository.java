@@ -2,11 +2,13 @@ package com.codecool.fileshare.repository;
 
 import com.codecool.fileshare.exception.ImageAlreadyInDatabaseException;
 import com.codecool.fileshare.model.Image;
+import org.postgresql.shaded.com.ongres.scram.common.bouncycastle.base64.Base64Encoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -87,7 +89,8 @@ public class ImageJdbcRepository implements ImageRepository {
                         rs.getString("title"),
                         rs.getString("description"),
                         rs.getString("tags"),
-                        rs.getString("extension")
+                        rs.getString("extension"),
+                        Base64.getEncoder().encodeToString(rs.getBytes("content"))
                 );
                 imageList.add(image);
             }
@@ -128,7 +131,7 @@ public class ImageJdbcRepository implements ImageRepository {
     }
 
     @Override
-    public byte[] getImageFile(String id) {
+    public String getImageFile(String id) {
         String uuid = id.split("\\.")[0];
         byte[] bytearray = null;
         String SQL = "SELECT content FROM image WHERE id::text = ?;";
@@ -139,7 +142,7 @@ public class ImageJdbcRepository implements ImageRepository {
             if (rs.next()) {
                 bytearray = rs.getBytes(1);
             }
-            return bytearray;
+            return Base64.getEncoder().encodeToString(bytearray);
 
         } catch (SQLException e) {
             throw new RuntimeException(getClass().getSimpleName() + " " + SQL + ": " + e.getSQLState());

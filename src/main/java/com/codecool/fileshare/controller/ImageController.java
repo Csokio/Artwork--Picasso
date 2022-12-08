@@ -52,14 +52,14 @@ public class ImageController {
     }
 
     @GetMapping("/{filename}")
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename, Authentication authentication) {
+    public ResponseEntity<String> serveFile(@PathVariable String filename, Authentication authentication) {
         String id = filename.split("\\.")[0];
         if(!imageService.checkOwner(authentication.getName(),id)){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         };
-        byte[] file = imageService.getImageFile(filename);
+        String file = imageService.getImageFile(filename);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "inline").body(new ByteArrayResource(file));
+                "inline").body(file);
     }
 
     @PostMapping()

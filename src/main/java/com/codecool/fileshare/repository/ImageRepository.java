@@ -15,5 +15,5 @@ public interface ImageRepository {
 
     void updateImage(String id, String title, String description, String tags, String owner); //updates, id, title. only update if owner matches
 
-    byte[] getImageFile(String id);
+    String getImageFile(String id);
 }
